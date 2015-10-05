@@ -2,24 +2,26 @@
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
-
 var stringifyJSON = function(obj) {
-  // array
   var results;
 
   if (Array.isArray(obj)) {
-    if (obj.length === 0) {
-      return '[]';
-    }
     results = obj.reduce(function(res, elt) {
       return res.concat(stringifyJSON(elt));
     }, []);
 
     return "[" + results.join(',') + "]";
   }
-  else if (obj && typeof obj === 'object') {
+  else if (obj === null) {
+    return "null";
+  }
+  else if (typeof obj === 'object') {
     results = "{";
-    
+
+    // Object.keys(obj).reduce(function(res, key, i) {
+    //   obj[key]
+    // })
+
     for (var key in obj) {
       if (obj[key] === undefined || typeof obj[key] === 'function') {
         continue;
@@ -27,16 +29,16 @@ var stringifyJSON = function(obj) {
       results = results.concat('"' + key + '"', ":", stringifyJSON(obj[key]), ",");
     }
 
-    if (results !== '{') { results = results.substring(0, results.length - 1); }
+    if (results !== '{') {
+      results = results.substring(0, results.length - 1);
+    }
 
     return results + "}";
-  }
-  else if (typeof obj === 'undefined' || typeof obj === 'function') {
-
   }
   else if (typeof obj === 'string') {
     return '"' + obj + '"';
   }
-
-  return ''+obj;
+  else {
+    return String(obj);
+  }
 };
